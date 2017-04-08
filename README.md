@@ -1,5 +1,5 @@
 # 8NoobsBot
-Telegram Bot for manage member's statistics and participation among other features.
+Telegram Bot for managing member's statistics and participation among other features.
 
 ## Libraries
 1. [Ruby Wrapper for Telegram Bot API](https://github.com/atipugin/telegram-bot-ruby)
