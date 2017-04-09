@@ -1,10 +1,10 @@
 # Importamos la libreria de telegram-bot
 # Para instalarla en tu maquina:
 require 'telegram/bot'
-
+require './constants'
 # Token de nuestro bot. String proporcionado por BotFather
 # Por motivos de seguridad no lo colocamos aqui
-token = 'your-token-here'
+token = Constants::TOKEN
 
 # El metodo run pondra a nuestro bot en funcionamiento
 # Se trata de un loop infinito en el que el bot va procesando
@@ -52,7 +52,7 @@ Telegram::Bot::Client.run(token) do |bot|
       # Estas lineas son las que reenvian el mensaje de normas cuando un usuario
       # escribe /start en privado.
       if !message.text.nil? && message.text.include?('/start')
-        if message.chat.id != -1001065691237
+        if message.chat.id != Constants::ID_GROUP
           bot.api.forward_message(chat_id: message.chat.id,
                                   from_chat_id: 209566334,
                                   message_id: 384)
