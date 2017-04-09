@@ -1,7 +1,8 @@
 # 8NoobsBot
+Telegram Bot for managing member's statistics and participation among other features.
 
-Ruby wrapper for the Teleram Bot API I used: [atipugin/telegram-bot-ruby](https://github.com/atipugin/telegram-bot-ruby)
+## Libraries
+1. [Ruby Wrapper for Telegram Bot API](https://github.com/atipugin/telegram-bot-ruby)
 
---
-* [Telegram](http://telegram.me/TuorTurambar)
-* [Github](https://github.com/TuriTyrsson)
+## Telegram's profile
+* [@TuorTurambar](http://telegram.me/TuorTurambar)
