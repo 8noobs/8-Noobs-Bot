@@ -1,7 +1,7 @@
 # Importamos la libreria de telegram-bot
 # Para instalarla en tu maquina:
 require 'telegram/bot'
-
+require './read_json'
 # Token de nuestro bot. String proporcionado por BotFather
 # Por motivos de seguridad no lo colocamos aqui
 token = 'your-token-here'
@@ -56,6 +56,11 @@ Telegram::Bot::Client.run(token) do |bot|
           bot.api.forward_message(chat_id: message.chat.id,
                                   from_chat_id: 209566334,
                                   message_id: 384)
+        end
+      end
+      if !message.text.nil? && message.text.include?('bot consulta de inactivos')
+        if message.from.username == 'TuorTurambar'
+
         end
       end
     # Aqui vemos si el mensaje recibido es de tipo CallbackQuery.
