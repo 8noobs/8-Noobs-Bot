@@ -2,17 +2,18 @@
 # Para instalarla en tu maquina:
 require 'telegram/bot'
 require './constants'
-require './read_json'
+require './db/db_con'
 require './member'
+
 # Token de nuestro bot. String proporcionado por BotFather
 # Por motivos de seguridad no lo colocamos aqui
 token = Constants::TOKEN
+
 # ======================================================================
 # =============== Metodos para el manejo de los mensajes ===============
 
-# Metodo para dar la bienvenida a nuevos miembros y referirle las normas
-def welcome_message(bot, name, msj)
-  bot.api.send_message(chat_id: msj.chat.id, text: "Bienvenido a 8Noob, #{name}")
+# Metodo de envio del boton para ir a las normas
+def normas(bot, msj)
   # kb es un array con la construccion de lo botones de un teclado
   # inline. En este caso solo hay una opcion "Normas"
   kb = [Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Normas',
@@ -24,6 +25,34 @@ def welcome_message(bot, name, msj)
   bot.api.send_message(chat_id: msj.chat.id,
                        text: 'Haz click abajo para ver las normas en privado',
                        reply_markup: markup)
+end
+
+# Metodo para hacer la peticion de envio de normas
+def envio_normas(bot, msj)
+  case Constants::ADMINS.include?msj.from.username
+  when true
+    case msj.text
+    when /bot, envia las normas/
+      normas(bot, msj)
+    end
+  end
+end
+
+# Metodo para el envio del repositorio en el que se encuentra el bot
+def envio_repo(bot, msj)
+  case msj.text
+	when /bot, envia tu repo/
+	  url = 'https://github.com/8noobs/8-Noobs-Bot'
+    bot.api.send_message(chat_id: msj.chat.id,
+						              text: url)
+													
+	end
+end
+# Metodo para dar la bienvenida a nuevos miembros y referirle las normas
+def welcome_message(bot, name, msj)
+  bot.api.send_message(chat_id: msj.chat.id,
+                       text: "Bienvenido a 8Noob, #{name}.")
+  normas(bot, msj)
 end
 
 # Metodo para el envio de las normas del grupo
@@ -40,11 +69,7 @@ def num_messages(bot, message)
   if Constants::ADMINS.include?message.from.username
     case message.text
     when /bot, numero de mensajes de/
-      usr = message.text.split(' ')[5].delete('@')
-      numero = ReadJSON.num_messages_user(usr)
-      mensaje = "Este usuario ha escrito #{numero} mensajes"
-      bot.api.send_message(chat_id: message.chat.id, text: mensaje,
-                           reply_to_message_id: message.message_id)
+
     end
   end
 end
@@ -53,11 +78,7 @@ def last_message(bot, message)
   if Constants::ADMINS.include?message.from.username
     case message.text
     when /bot, ultimo mensaje de/
-      usr = message.text.split(' ')[4].delete('@')
-      numero = ReadJSON.last_message(usr)
-      mensaje = "Este usuario escribió por última vez hace #{numero} días"
-      bot.api.send_message(chat_id: message.chat.id, text: mensaje,
-                           reply_to_message_id: message.message_id)
+
     end
   end
 end
@@ -66,16 +87,7 @@ def inactive_member(bot, message)
   if Constants::ADMINS.include?message.from.username
     case message.text
     when /bot, esta inactivo/
-      msj = ''
-      usr = message.text.split(' ')[3].delete('@')
-      if ReadJSON.inactive_member(usr)
-        msj = 'Si. El usuario lleva  20 días o más sin hablar'
-      else
-        msj = 'No. El usuario lleva menos de 20 días sin hablar'
-      end
-      bot.api.send_message(chat_id: message.chat.id,
-                           text: msj,
-                           reply_to_message_id: message.message_id)
+
     end
   end
 end
@@ -84,27 +96,40 @@ def inactive_members(bot, message)
   if Constants::ADMINS.include?message.from.username
     case message.text
     when /bot, muestrame los inactivos/
-      msj = ''
-      ReadJSON.inactive_members.each { |x| msj = msj + x + ". #{ReadJSON.last_message(x)} días sin hablar \n" }
-      if msj.empty?
-        bot.api.send_message(chat_id: message.chat.id,
-                             text: 'No existen miembros inactivos',
-                             reply_to_message_id: message.message_id)
-      else
-        bot.api.send_message(chat_id: message.chat.id,
-                             text: msj,
-                             reply_to_message_id: message.message_id)
-      end
+
     end
   end
 end
 
 def insert_member(message)
   unless message.chat.id != Constants::ID_GROUP
-    usr = message.from
-    date = Time.at(message.date).to_s
-    member = Member.new(usr.id.to_s, usr.first_name, usr.username, date)
-    member.insert
+
+  end
+end
+
+def insert_user(message)
+  id = message.from.id
+  first_name = message.from.first_name
+  username = message.from.username
+  case DBCon.user_query.map { |hash| hash['id'] == id }.any?
+  when true
+    DBCon.update_user(id, username, first_name)
+  when false
+    DBCon.insert_user(id, username, first_name)
+  end
+end
+
+def insert_msj(message)
+  id_user = message.from.id
+  id = message.message_id
+  text = message.text
+  date = Time.at(message.date)
+  video = message.video.nil? ? 0 : 1
+  photo = message.photo.empty? ? 0 : 1
+  voice = message.voice.nil? ? 0 : 1
+  document = message.document.nil? ? 0 : 1
+  if DBCon.msj_query(id).size.zero?
+    DBCon.insert_msj(id, text, date, voice, document, video, photo, id_user)
   end
 end
 #==============================================================================
@@ -141,9 +166,17 @@ Telegram::Bot::Client.run(token) do |bot|
           last_message(bot, message)
           inactive_member(bot, message)
           inactive_members(bot, message)
+					envio_normas(bot, message)
+		      envio_repo(bot, message)
         end
         unless message.from.id.nil?
-          insert_member(message)
+          begin
+            insert_user(message)
+            insert_msj(message)
+          rescue Mysql2::Error => e
+            puts e.exception
+            puts e.backtrace
+          end
         end
       rescue NoMethodError => e
         puts e.exception
