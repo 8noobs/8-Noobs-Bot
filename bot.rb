@@ -1,7 +1,6 @@
 require 'telegram/bot'
 require './constants'
 require './db/db_con'
-require './member'
 
 # Token de nuestro bot. String proporcionado por BotFather
 # Por motivos de seguridad no lo colocamos implicito aquí
@@ -31,7 +30,7 @@ end
 def envio_normas(bot, msj)
   if is_admin(msj)    
 		case msj.text
-    when %r{^([Hh]uginn|[Mm]uninn), envia las normas}i
+    when %r{^([Hh]uginn|[Mm]uninn), env(i|ía)a las normas}i
       normas(bot, msj)
     end
   end
@@ -40,7 +39,7 @@ end
 # Metodo para el envio del repositorio en el que se encuentra el bot
 def envio_repo(bot, msj)
   case msj.text
-  when bot_order('envia tu repo')
+  when bot_order('env(i|í)a tu repo')
     url = 'https://github.com/8noobs/8-Noobs-Bot'
     send_message(bot, msj.chat.id, url)
   end
@@ -182,7 +181,7 @@ end
 def inactive_member(bot, message)
   if is_admin(message)
     case message.text
-    when bot_order('esta inactivo') 
+    when bot_order('est(a|á) inactivo') 
      case message.reply_to_message
       when nil 
 			  username = message.text.split(' ')[3].delete("@")
@@ -231,7 +230,7 @@ end
 def inactive_members(bot, message)
   if is_admin(message)
     case message.text
-    when bot_order('muestrame los inactivos')
+    when bot_order('mu(e|é)strame los inactivos')
       query = DBCon.users_query.select { |x| DBCon.last_date(x['id']) > 20 }
 			msj = 'Miembros inactivos'
       query.each do |hash|
@@ -476,7 +475,6 @@ Telegram::Bot::Client.run(token) do |bot|
     when Telegram::Bot::Types::CallbackQuery
       begin
         if message.data == 'normas'
-          puts message.id
           bot.api.answerCallbackQuery(callback_query_id: message.id,
                                       url: 'http://telegram.me/OchoNoobsBot?start=XXXX')
         end
