@@ -23,7 +23,7 @@ El bot posee 6 funciones. Estas funciones pueden ser usadas contestando el mensa
 ```
 4. Lista de miembros inactivos
 ```
-[huginn | munnin], mu[e|é]strame los inactivo
+[huginn | munnin], mu[e|é]strame los inactivos
 ```
 5. Enviar repositorio
 ```
