@@ -265,7 +265,8 @@ end
 # Metodo que inserta informacion del mensaje enviado
 # en la base de datos
 def insert_msj(message)
-  id_user = message.from.id
+  allowed_msg = ['/start XXXX']
+	id_user = message.from.id
   id = message.message_id
   text = message.text
   date = Time.at(message.date) + 7200
@@ -273,9 +274,15 @@ def insert_msj(message)
   photo = message.photo.empty? ? 0 : 1
   voice = message.voice.nil? ? 0 : 1
   document = message.document.nil? ? 0 : 1
-  if DBCon.msj_query(id).size.zero?
-    DBCon.insert_msj(id, text, date, voice, document, video, photo, id_user)
-  end
+	if message.chat.type == 'private'
+	  if allowed_msg.include?text
+      DBCon.insert_msj(id, text, date, voice, document, video, photo, id_user)
+		end
+	else
+    if DBCon.msj_query(id).size.zero?
+      DBCon.insert_msj(id, text, date, voice, document, video, photo, id_user)
+    end
+	end
 end
 
 #==============================================================================
