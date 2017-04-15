@@ -268,7 +268,7 @@ def insert_msj(message)
   id_user = message.from.id
   id = message.message_id
   text = message.text
-  date = Time.at(message.date)
+  date = Time.at(message.date) + 7200
   video = message.video.nil? ? 0 : 1
   photo = message.photo.empty? ? 0 : 1
   voice = message.voice.nil? ? 0 : 1
