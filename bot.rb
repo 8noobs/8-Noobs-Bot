@@ -233,15 +233,19 @@ def inactive_members(bot, message)
     when bot_order('mu(e|é)strame los inactivos')
       query = DBCon.users_query.select { |x| DBCon.last_date(x['id']) > 20 }
 			msj = 'Miembros inactivos'
-      query.each do |hash|
-			  if hash['alias'].empty? 
-				  msj += "\n Nombre: #{hash['nombre']}.Hace #{DBCon.last_date(hash['id'])} días."
-				else
-				  msj += "\n Alias: @#{hash['alias']}, Nombre: #{hash['nombre']}. Hace #{DBCon.last_date(hash['id'])} días."
-				end
+			if query.empty?
+			  send_message(bot, message.chat.id, "No hay miembros inactivos")
+			else
+        query.each do |hash|
+			    if hash['alias'].empty? 
+				    msj += "\n Nombre: #{hash['nombre']}.Hace #{DBCon.last_date(hash['id'])} días."
+				  else
+				    msj += "\n Alias: @#{hash['alias']}, Nombre: #{hash['nombre']}. Hace #{DBCon.last_date(hash['id'])} días."
+				  end
+			  end
 			end
 			send_message(bot, message.chat.id, msj)
-		end
+    end
   end
 end
 #========================================================================
@@ -461,6 +465,10 @@ Telegram::Bot::Client.run(token) do |bot|
           inactive_members(bot, message)
           envio_normas(bot, message)
           envio_repo(bot, message)
+					case message.text
+					when 'responde'
+            send_message(bot, message.chat.id, 'p' )
+					end
 
         end
         unless message.from.id.nil?
@@ -491,3 +499,4 @@ Telegram::Bot::Client.run(token) do |bot|
     end
   end
 end
+
