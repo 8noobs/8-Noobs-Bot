@@ -243,8 +243,8 @@ def inactive_members(bot, message)
 				    msj += "\n Alias: @#{hash['alias']}, Nombre: #{hash['nombre']}. Hace #{DBCon.last_date(hash['id'])} días."
 				  end
 			  end
-			end
-			send_message(bot, message.chat.id, msj)
+      send_message(bot, message.chat.id, msj)			
+      end
     end
   end
 end
