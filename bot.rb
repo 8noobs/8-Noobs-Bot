@@ -243,8 +243,8 @@ def inactive_members(bot, message)
 				    msj += "\n Alias: @#{hash['alias']}, Nombre: #{hash['nombre']}. Hace #{DBCon.last_date(hash['id'])} días."
 				  end
 			  end
-      send_message(bot, message.chat.id, msj)			
-      end
+			end
+			send_message(bot, message.chat.id, msj)
     end
   end
 end
@@ -494,7 +494,7 @@ Telegram::Bot::Client.run(token) do |bot|
           envio_normas(bot, message)
           envio_repo(bot, message)
 					count_members(bot, message)
-			    bot_age(bot, messagge)
+			    bot_age(bot, message)
 					case message.text
 					when 'responde'
             send_message(bot, message.chat.id, 'p' )
