@@ -248,6 +248,24 @@ def inactive_members(bot, message)
     end
   end
 end
+
+def count_members(bot, message)
+  if is_admin(message)
+    case message.text
+		when bot_order('a cu(a|á)ntos conoces')
+      query = DBCon.users_query
+			total = bot.api.getChatMembersCount(chat_id:Constants::ID_GROUP)
+			send_message(bot, message.chat.id, "De #{total['result']} miembros solo conozco a #{query.size}")
+		  sleep(2)
+		  send_message(bot, message.chat.id, 'Estos son ...')
+			sleep(2)
+		  msj = ""
+		  query.each { |hash| msj += hash['nombre'].delete('?')+"\n" }
+			send_message(bot, message.chat.id, msj)
+		when bot_order('estadisticas ')
+		end
+	end
+end
 #========================================================================
 
 #=========================================================================
@@ -465,6 +483,7 @@ Telegram::Bot::Client.run(token) do |bot|
           inactive_members(bot, message)
           envio_normas(bot, message)
           envio_repo(bot, message)
+					count_members(bot, message)
 					case message.text
 					when 'responde'
             send_message(bot, message.chat.id, 'p' )
