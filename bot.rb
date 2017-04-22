@@ -266,6 +266,16 @@ def count_members(bot, message)
 		end
 	end
 end
+
+def bot_age(bot, message)
+  if is_admin(message)
+    case message.text
+    when bot_order('dias activo')
+		  num = Time.now.to_date - Constants::TIME_BEGIN
+			send_message(bot, message.chat.id, "#{num.to_i} días.")
+		end
+  end
+end
 #========================================================================
 
 #=========================================================================
@@ -484,6 +494,7 @@ Telegram::Bot::Client.run(token) do |bot|
           envio_normas(bot, message)
           envio_repo(bot, message)
 					count_members(bot, message)
+			    bot_age(bot, messagge)
 					case message.text
 					when 'responde'
             send_message(bot, message.chat.id, 'p' )
