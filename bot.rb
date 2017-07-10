@@ -2,7 +2,8 @@ require 'telegram/bot'
 require './db/db_con'
 require './constants'
 require './modules/data_insert'
-
+require './modules/data_select'
+require './modules/message_manager'
 # Token de nuestro bot. String proporcionado por BotFather
 # Por motivos de seguridad no lo colocamos implicito aquí
 token = Constants::TOKEN
@@ -31,21 +32,21 @@ Telegram::Bot::Client.run(token) do |bot|
           if !user_name.nil? # En caso de que tenga un username
             welcome_message(bot, "@#{user_name}", message)
           else # En caso de que no tenga username
-            welcome_message(bot, first_name, message)
+            Message_Manager.welcome_message(bot, first_name, message)
           end
         end
         # Cuando el texto del mensaje no es nulo, manejamos los diferentes
         # comandos o mensajes enviados.
         unless message.text.nil?
-          start(bot, message)
-          user_statistics(bot, message)
-          last_message(bot, message)
-          inactive_member(bot, message)
-          inactive_members(bot, message)
-          envio_normas(bot, message)
-          envio_repo(bot, message)
-					count_members(bot, message)
-			    bot_age(bot, message)
+          Message_Manager.start(bot, message)
+          Message_Manager.user_statistics(bot, message)
+          Message_Manager.last_message(bot, message)
+          Message_Manager.inactive_member(bot, message)
+          Message_Manager.inactive_members(bot, message)
+          Message_Manager.envio_normas(bot, message)
+          Message_Manager.envio_repo(bot, message)
+					Message_Manager.count_members(bot, message)
+			    Message_Manager.bot_age(bot, message)
 					case message.text
 					when 'responde'
             send_message(bot, message.chat.id, 'p' )

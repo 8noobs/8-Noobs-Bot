@@ -1,6 +1,6 @@
 #==============================================================================
 #=================== METODOS PARA RECOGER DATOS ===============================
-
+require "../db/db_con"
 module Data_Select
   # Metodo que nos devuelve la informacion de un usuario por su id
   def self.id_query(id)
