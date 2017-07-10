@@ -2,7 +2,6 @@ require 'telegram/bot'
 require './db/db_con'
 require './constants'
 require './modules/data_insert'
-require './modules/data_select'
 require './modules/message_manager'
 # Token de nuestro bot. String proporcionado por BotFather
 # Por motivos de seguridad no lo colocamos implicito aquí
@@ -30,7 +29,7 @@ Telegram::Bot::Client.run(token) do |bot|
           user_name = message.new_chat_member.username
           first_name = message.new_chat_member.first_name
           if !user_name.nil? # En caso de que tenga un username
-            welcome_message(bot, "@#{user_name}", message)
+            Message_Manager.welcome_message(bot, "@#{user_name}", message)
           else # En caso de que no tenga username
             Message_Manager.welcome_message(bot, first_name, message)
           end

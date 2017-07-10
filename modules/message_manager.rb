@@ -1,5 +1,5 @@
-require 'util'
-require '../constants'
+require './modules/util'
+require './constants'
 # ======================================================================
 # =============== Metodos para el manejo de los mensajes ===============
 module Message_Manager
